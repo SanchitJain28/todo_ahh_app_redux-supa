@@ -58,14 +58,14 @@ export default function Tasks() {
                         {supaTasks.map((e, index) => {
                             return <>
                                 {/* FOR MOBILE */}
-                                <motion.div whileHover={{ scaleY: 1.2, scaleX: 1.01, transition: { duration: 0.1 } }} onClick={() => { dispatch(setIndividualTask(e)); navigate("/currentTask") }} initial={{ x: window.innerWidth, opacity: 0, scale: 0 }} animate={{ scale: 1, x: 0, opacity: 1, transition: { type: "", duration: 1, ease: "easeOut" } }} key={index} exit={{ opacity: 0, transition: { duration: 0.4 } }} className={` ${e.color || "text-white"}  overflow-hidden  p-4 my-2 lg:mx-4 mx-1 border border-zinc-800 rounded lg:hidden shadow-lg shadow-cyan-500/30`}>
+                                <motion.div whileHover={{ scaleY: 1.2, scaleX: 1.01, transition: { duration: 0.1 } }} onClick={() => { dispatch(setIndividualTask(e)); navigate("/currentTask") }} initial={{ x: window.innerWidth, opacity: 0, scale: 0 }} animate={{ scale: 1, x: 0, opacity: 1, transition: { type: "", duration: 1, ease: "easeOut" } }} key={index} exit={{ opacity: 0, transition: { duration: 0.4 } }} className={` ${e.style.color || "text-white"}  overflow-hidden  p-4 my-2 lg:mx-4 mx-1 border border-zinc-800 rounded lg:hidden shadow-lg shadow-cyan-500/30`}>
                                     <p className='lg:text-xl text-sm overflow-hidden lg:mx-2 font-sans '>{e.text.length > 200 ? <p>{e.text.slice(0, 200)}...<span className='text-green-600 font-bold underline'>Read more</span></p> : e.text}</p>
                                 </motion.div>
                                 {/* FOR PC */}
                                 <motion.div variants={{
                                     column: { scale: 1, x: 0, opacity: 1, transition: { type: "", duration: 1, ease: "easeOut" } },
                                     grid: { scale: 1, x: 0, opacity: 1, transition: { type: "", duration: 1, ease: "easeOut" } }
-                                }} whileHover={{ scaleY: 1.1, scaleX: 1.01, transition: { duration: 0.1 } }} onClick={() => { dispatch(setIndividualTask(e)); navigate("/currentTask") }} initial={{ x: window.innerWidth, opacity: 0, scale: 0 }} animate={viewMode.name == "column mode" ? "column" : "grid"} key={index + 1} exit={{ opacity: 0, transition: { duration: 0.4 } }} className={`	 ${e.color || "text-white"}  p-4 my-2 lg:mx-4 lg:my-4 mx-4 border border-zinc-800 rounded lg:block hidden shadow-lg shadow-cyan-500/30`}>
+                                }} whileHover={{ scaleY: 1.1, scaleX: 1.01, transition: { duration: 0.1 } }} onClick={() => { dispatch(setIndividualTask(e)); navigate("/currentTask") }} initial={{ x: window.innerWidth, opacity: 0, scale: 0 }} animate={viewMode.name == "column mode" ? "column" : "grid"} key={index + 1} exit={{ opacity: 0, transition: { duration: 0.4 } }} className={`	 ${e.style.color || "text-white"}  p-4 my-2 lg:mx-4 lg:my-4 mx-4 border border-zinc-800 rounded lg:block hidden shadow-lg shadow-cyan-500/30`}>
                                     <p className='lg:text-xl text-sm overflow-hidden lg:mx-2 font-sans '>{e.text.length > 400 ? <p>{e.text.slice(0, 400)}...<span className='text-green-600 font-bold underline'>Read more</span></p> : e.text}</p>
                                 </motion.div>
                             </>

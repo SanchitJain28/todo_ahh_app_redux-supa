@@ -9,7 +9,7 @@ const initialState = {
         id: 1,
         text: "hello World"
     }],
-    initialTask: [],
+    initialTask: JSON.parse(localStorage.getItem("currentNote"))?JSON.parse(localStorage.getItem("currentNote")):{},
     supaTasks:[],
     viewMode: { class: "flex flex-col", name: "column mode" },
     isAlert: false,
@@ -38,7 +38,7 @@ export const addNote=createAsyncThunk('addNote',async(details,{rejectWithValue})
     try {
         const {data,error}=await supabase
         .from('notes')
-        .upsert({  text: details.text,user:details.user_id,style:{"color":"bg-black"} })
+        .upsert({  text: details.text,user:details.user_id,style:{"color":"bg-black text-white"} })
         .select()
         if(error){
             throw new Error(error.message)
@@ -53,7 +53,7 @@ export const updateNote=createAsyncThunk("updateNote",async(details,{rejectWithV
     try {
         const data=await supabase
     .from('notes')
-    .update({ text:details.text })
+    .update(details.data)
     .eq('id', details.note_id)
     if(data.error){
         throw new Error(data.error.message)
@@ -89,6 +89,7 @@ export const todoSlice = createSlice({
         },
         setIndividualTask: (state, action) => {
             state.initialTask = action.payload
+            localStorage.setItem("currentNote",JSON.stringify(action.payload))
         },
         changeViewMode: (state, action) => {
             state.viewMode = { ...action.payload }

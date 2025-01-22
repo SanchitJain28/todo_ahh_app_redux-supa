@@ -57,7 +57,7 @@ export default function AddTodo() {
                 <textarea value={input} onChange={(e) => {
                     const updatedValue = e.target.value;
                     setInput(updatedValue);
-                    handleUpdate({ note_id: myCurrentTask.id, text: updatedValue })
+                    handleUpdate({ note_id: myCurrentTask.id, data:{text: updatedValue} })
                 }} className=' focus:outline-none text-white text-2xl p-4 font-sans bg-black border border-zinc-900 rounded-lg w-full min-h-screen'></textarea>
             </div>
         </>
