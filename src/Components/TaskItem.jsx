@@ -7,7 +7,7 @@ import { CSS } from "@dnd-kit/utilities";
 export default function TaskItem({ id, style, text }) {
   const navigate = useNavigate();
   const dragTimeout = useRef(null);
-  const isDraggingEnabled = useRef(false);
+  const dragStarted = useRef(false);
 
   const {
     attributes,
@@ -15,7 +15,7 @@ export default function TaskItem({ id, style, text }) {
     setNodeRef,
     transform,
     transition,
-    isDragging, // 🟢 gives true when dragging
+    isDragging,
   } = useSortable({ id });
 
   const sortStyle = {
@@ -24,22 +24,23 @@ export default function TaskItem({ id, style, text }) {
     zIndex: isDragging ? 999 : 1,
   };
 
-  const handlePointerDown = (e) => {
+  const handleStart = (e) => {
     dragTimeout.current = setTimeout(() => {
-      isDraggingEnabled.current = true;
-      listeners.onPointerDown(e);
-    }, 100); // hold 500ms
+      dragStarted.current = true;
+      listeners.onPointerDown?.(e); // triggers sorting
+      listeners.onTouchStart?.(e);  // for mobile sorting
+    }, 100); // wait 500ms before enabling drag
   };
 
-  const handlePointerUp = () => {
+  const handleEnd = () => {
     clearTimeout(dragTimeout.current);
-    if (!isDraggingEnabled.current) {
+    if (!dragStarted.current) {
       navigate(`/currentTask?id=${id}`);
     }
-    isDraggingEnabled.current = false;
+    dragStarted.current = false;
   };
 
-  const handlePointerMove = () => {
+  const handleCancel = () => {
     clearTimeout(dragTimeout.current);
   };
 
@@ -60,9 +61,12 @@ export default function TaskItem({ id, style, text }) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerMove={handlePointerMove}
+      onPointerDown={handleStart}
+      onPointerUp={handleEnd}
+      onPointerMove={handleCancel}
+      onTouchStart={handleStart}
+      onTouchEnd={handleEnd}
+      onTouchMove={handleCancel}
     >
       <p className="w-full overflow-hidden font-sans text-sm lg:text-xl lg:mx-2">
         {text.length > 200 ? (
