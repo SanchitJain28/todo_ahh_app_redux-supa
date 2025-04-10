@@ -155,6 +155,7 @@ export default function Tasks() {
                 strategy={rectSortingStrategy}
               >
                 {tasks.map((task) => (
+                
                   <TaskItem
                     key={task.id}
                     id={task.id}
