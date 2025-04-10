@@ -1,14 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setIndividualTask, changeViewMode } from "../features/todoSlice";
-
 import { Link, useNavigate } from "react-router";
-import { AnimatePresence, motion } from "motion/react";
-
+import { motion } from "motion/react";
 import { logOut } from "../features/authSlice";
 import { supabase } from "../backend/supabaseConfig";
 
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy
+} from "@dnd-kit/sortable";
+import TaskItem from "./TaskItem";
 export default function Tasks() {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.loginDetails.id);
   const dispatch = useDispatch();
@@ -35,6 +54,20 @@ export default function Tasks() {
   const viewMode = useSelector((state) => {
     return state.todo.viewMode;
   });
+  function handleDragEnd(event) {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    if (active.id !== over.id) {
+      setTasks((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        console.log(oldIndex, newIndex);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  }
   //WE CAN ALSO WRITE,both works same
   // const todosAlternativeSyntax = useSelector(state=>state.todoReducer.todos);
   return (
@@ -100,69 +133,51 @@ export default function Tasks() {
         <i className="text-3xl rounded-full fa-solid fa-plus"></i>
       </motion.div>
 
-      <AnimatePresence>
-        {tasks.length !== 0 ? (
-          <>
+      {tasks.length !== 0 ? (
+        <>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
             <motion.div
               initial={{ x: window.innerWidth, opacity: 0, scale: 0 }}
               animate={{
                 scale: 1,
                 x: 0,
                 opacity: 1,
-                transition: { type: "", duration: 0.6, ease: "easeOut" },
+                transition: { type: "spring", duration: 0.5, ease: "easeOut" },
               }}
               className={`${viewMode.class} p-4`}
             >
-              {tasks.map((e, index) => {
-                return (
-                  <>
-                    <motion.div
-                                  key={index}
-
-                      whileHover={{
-                        scaleY: 1.2,
-                        scaleX: 1.01,
-                        transition: { duration: 0.1 },
-                      }}
-                      onClick={() => {
-                        dispatch(setIndividualTask(e));
-                        navigate(`/currentTask?id=${e.id}`);
-                      }}
-                      className={` ${
-                        e.style.color || "text-white"
-                      }  overflow-hidden  p-4 my-2 lg:mx-4 mx-1 border border-zinc-800 rounded shadow-lg shadow-cyan-500/30`}
-                    >
-                      <p className="overflow-hidden font-sans text-sm lg:text-xl lg:mx-2 ">
-                        {e.text.length > 200 ? (
-                          <span>
-                            {e.text.slice(0, 200)}...
-                            <span className="font-bold text-green-600 underline">
-                              Read more
-                            </span>
-                          </span>
-                        ) : (
-                          e.text
-                        )}
-                      </p>
-                    </motion.div>
-                  </>
-                );
-              })}
-            </motion.div>
-          </>
-        ) : (
-          <>
-            <div className="flex content-center justify-center p-4 border rounded border-zinc-800">
-              <Link
-                to="/addtask"
-                className="font-sans text-lg text-center text-white lg:text-3xl text-zinc-600"
+              <SortableContext
+                items={tasks.map((task) => task.id)} // ✅ IDs only
+                strategy={rectSortingStrategy}
               >
-                Create a new task
-              </Link>
-            </div>
-          </>
-        )}
-      </AnimatePresence>
+                {tasks.map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    id={task.id}
+                    style={task.style}
+                    text={task.text}
+                  />
+                ))}
+              </SortableContext>
+            </motion.div>
+          </DndContext>
+        </>
+      ) : (
+        <>
+          <div className="flex content-center justify-center p-4 border rounded border-zinc-800">
+            <Link
+              to="/addtask"
+              className="font-sans text-lg text-center text-white lg:text-3xl text-zinc-600"
+            >
+              Create a new task
+            </Link>
+          </div>
+        </>
+      )}
     </>
   );
 }
