@@ -17,22 +17,6 @@ const initialState = {
     AlertStyle: "red-600"
 }
 
-export const fetchNotes=createAsyncThunk('fetchNotes',async(details,{rejectWithValue})=>{
-    try {
-        const {data,error}= await supabase
-    .from('notes')
-    .select()
-    .eq('user',details.user_id)
-    console.log(data)
-    if(error){
-        throw new Error(error.message)
-    }
-    return data
-    } catch (error) {
-        return rejectWithValue(error.message)
-    }
-    
-})
 
 export const addNote=createAsyncThunk('addNote',async(details,{rejectWithValue})=>{
     try {
@@ -63,19 +47,7 @@ export const updateNote=createAsyncThunk("updateNote",async(details,{rejectWithV
     }
 })
 
-export const deleteNote=createAsyncThunk("deleteNote",async(details,{rejectWithValue})=>{
-    try {
-        const data=await supabase
-    .from('notes')
-    .delete()
-    .eq('id', details.note_id)
-    if(data.error){
-        throw new Error(data.error.message)
-    }
-    } catch (error) {
-        return rejectWithValue(error)
-    }
-})
+
 
 export const todoSlice = createSlice({
     name: "todo",
@@ -96,13 +68,7 @@ export const todoSlice = createSlice({
         }
     },
     extraReducers:(builder)=>{
-        builder.addCase(fetchNotes.rejected,(state,action)=>{
-            console.log("REJECTED")
-            alert("rejected")
-        })
-        builder.addCase(fetchNotes.fulfilled,(state,action)=>{
-            state.supaTasks=action.payload || []
-        })
+        
         builder.addCase(addNote.rejected,(state,action)=>{
             alert("REJCTED"+ " "+action.payload)
         })
@@ -116,14 +82,6 @@ export const todoSlice = createSlice({
             alert("REJECTED"+ " "+action.payload)
         })
         builder.addCase(updateNote.fulfilled,(state,action)=>{
-            state.isAlert = true
-            state.AlertMessage = "note has been updated"
-            state.AlertStyle = "green-600"
-        })
-        builder.addCase(deleteNote.rejected,(state,action)=>{
-            alert("REJECTED"+ " "+action.payload)
-        })
-        builder.addCase(deleteNote.fulfilled,(state,action)=>{
             state.isAlert = true
             state.AlertMessage = "note has been updated"
             state.AlertStyle = "green-600"

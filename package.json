@@ -5,6 +5,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
     "@supabase/supabase-js": "^2.47.16",
+    "@uidotdev/usehooks": "^2.4.1",
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
     "lodash.debounce": "^4.0.8",
