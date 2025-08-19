@@ -15,52 +15,48 @@ import AlertPage from './Components/AlertPage';
 
 
 function App() {
-  const isLogin=useSelector((state)=>{return state.auth.isLogin})
-
-  useEffect(() => {
-    console.log(isLogin)
-  }, [isLogin])
   
-  const myCurrentTask = useSelector((state) => { return state.todo.initialTask })
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<>
-          <div className=" min-h-screen bg-black/100  overflow-hidden">
+          <div className="min-h-screen overflow-hidden bg-black/100">
             <Home />
           </div>
         </>} />
         <Route path="/tasks" element={<>
-          <div className=" min-h-screen bg-black/100  overflow-hidden">
+          <div className="min-h-screen overflow-hidden bg-black/100">
             <Alert />
-            {isLogin ? <Tasks/>:<AlertPage/>}
+            <Tasks/>
+            {/* {isLogin ? <Tasks/>:<AlertPage/>} */}
           </div>
         </>} />
         <Route path="/addtask" element={<>
-          <div className="App min-h-screen bg-black p-4">
+          <div className="min-h-screen p-4 bg-black App">
           <Alert />
-            {isLogin?<AddTodo />:<AlertPage/>}
+          <AddTodo/>
           </div>
         </>} />
         <Route path="/about" element={<>
-          <div className="App min-h-screen bg-black p-4">
+          <div className="min-h-screen p-4 bg-black App">
             <About />
           </div>
         </>} />
         <Route path="/currentTask" element={<>
           <Alert />
-          <div className={`${myCurrentTask.color ? myCurrentTask.color : "bg-black"}  min-h-screen`}>
+          {/* <div className={`${myCurrentTask.color ? myCurrentTask.color : "bg-black"}  min-h-screen`}>
             {isLogin?<IndividualTask />:<AlertPage/>}
-          </div>
+          </div> */}
+          <IndividualTask/>
         </>} />
         <Route path="/signup" element={<>
-          <div className="App min-h-screen bg-black overflow-hidden">
+          <div className="min-h-screen overflow-hidden bg-black App">
             <Alert />
             <SignUpPage />
           </div>
         </>} />
         <Route path="/login" element={<>
-          <div className="App min-h-screen bg-black ">
+          <div className="min-h-screen bg-black App ">
             <Alert />
             <Login />
           </div>
